@@ -1,0 +1,45 @@
+---
+
+- name: Ensure packages
+  package:
+    name: ["nginx"]
+
+- name: Ensure config
+  copy:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+
+- name: Ensure config
+  template:
+    src: loadbalancer.conf.j2
+    dest: /etc/nginx/conf.d/loadbalancer.conf
+
+- name: Ensure nginx_health_checker.bash
+  copy:
+    src: nginx_health_checker.bash
+    dest: /usr/local/sbin/
+    mode: 0775
+
+- name: Ensure systemd nginx_health_checker.service config
+  copy:
+    src: files/nginx_health_checker.service
+    dest: /etc/systemd/system/nginx_health_checker.service
+  notify: nginx_health_checker_restart
+
+- name: service started and enabled
+  systemd:
+    name: nginx_health_checker
+    state: started
+    enabled: yes
+
+- name: Ensure httpd_can_network_connect flag on
+  seboolean:
+    name: httpd_can_network_connect
+    state: yes
+    persistent: yes
+
+- name: Ensure service enabled and restarted
+  service:
+    name: nginx
+    enabled: yes
+    state: restarted

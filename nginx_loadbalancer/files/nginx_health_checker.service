@@ -1,0 +1,14 @@
+[Unit]
+Description=Ngingx nodes health check
+Requires=network.target
+After=network.target
+
+[Service]
+#Type=oneshot
+#RemainAfterExit=yes
+ExecStart=/usr/local/sbin/nginx_health_checker.bash 
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

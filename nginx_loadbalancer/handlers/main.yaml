@@ -1,0 +1,5 @@
+- name: nginx_health_checker_restart
+  systemd:
+    name: nginx_health_checker
+    state: restarted
+    daemon_reload: yes
